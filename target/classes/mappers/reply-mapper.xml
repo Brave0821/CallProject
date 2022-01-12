@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.spring.ex08.ReplyMapper">
+<!-- vo db-> 맵퍼 만들고 dao 댓글 만듥 원래 컬럼은 5개지만 2개는 트리거가 ㅇㅇ 알아서해준다.
+그럼 트리거는 무슨의미지? 이건 쿼리이다. 그리고 쿼리를 맵퍼에 작성한다. 맵퍼는 연결해주는 역활?
+ -->
+ 
+	 <!-- namespace 부분은 daoimple 부분이기에. -->
+	 <!-- 테스트 할 시 세션 내가 만들 때는 테스트하기!!!!!!!! -->
+	 
+	 <!-- 즉 mybatis 부분과 daoimple dao 전부 연관성이 있다.  -->
+	 
+	 <!-- 11.16일  
+	 $부분은 mybatis의 name부분
+	 # 부분은 vo랑 DB의 테이블 부분. 
+	 
+	 즉 ${freply} 이 부분 = mybatis name 부분 
+		#{freply} 이 부분은 vo와 테이블 컬럼 부분.
+	  -->
+	  
+	  <!--11.16 mapper 만들고 dao 댓글 만든다 왜? 
+	  id 부분이 daoimple랑 맞아야 된다.
+	    -->
+	    
+	 <insert id="frinsert"> <!--  daoimple 1 -->
+	 	insert into ${FReply}
+	 	(${freplybno}, ${freplycontent}, ${freplyid})
+	 	values (#{freplybno}, #{freplycontent}, #{freplyid})	
+	 </insert>
+	 
+	 
+	 <select id="fselect_all_by_reply_bno" resultType="FReplyVO">
+	 	select * from ${FReply} <!-- FReply 전체검색 -->
+	 	where ${freplybno} = #{freplybno}
+	 	<!-- 11.16 가져온다. 게시글의 댓글 게시글에 들어가야 볼 수 있다. 
+	 	게시글에 번호가 있어서 볼 수 있다. -->	 
+	 	order by ${freplyno} <!-- 가져왔으면 당연히 댓글 번허로~  -->	 
+	 </select>
+	 
+	 
+	 <update id="frupdate">
+	 	update ${FReply} <!-- 11.16 수정은 작성자가 들어와서 내용만 바꿀 수 있고 작성자 부분은 못 바꾼다. -->
+	 	set ${freplycontent} = #{freplycontent} <!-- 11.16 댓글 수정하면 시간이 바뀌는건 트리거 역활 -->
+	 	where ${freplyno} = #{freplyno}
+	 </update>
+	 
+	 
+	 <delete id="frdelete">
+	 	delete from ${FReply}
+		where ${freplyno} = #{freplyno}  <!-- 번호만 보내주면 된다.  -->	 
+	 </delete>
+	 
+</mapper>

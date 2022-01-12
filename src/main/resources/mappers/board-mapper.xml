@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.spring.ex08.BoardMapper">
+	<!-- 10.15 DB 테이블과 연결을 위한 xml 파일 생성 namespace : 주로 dao 클래스의 sqlSession과 
+		연결하기 위한 키로 사용 DB 쿼리 작성 id : 주로 dao 클래스의 sqlSession의 함수와 연결하기 위해 사용 ${컬럼이름} 
+		: mybatis-config.xml의 property - name과 매칭. DB 테이블의 열 #{컬럼이름} : dao 클래스의 sqlSession에서 
+		전송받은 데이터(입력받은 데이터) -->
+
+
+	<!-- 맵퍼의 ID는 DAOImple 리턴 .과 관련이 있다. -->
+	<!-- ** 중요! DAOImple NAMESPACE + ".///////" 이 부분과 id = 부분과 일치해야한다. -->
+
+
+
+	<!-- mapper 태그 <insert>, <select>, <update>, <delete> dao - sqlSession의 
+		함수(insert, selectOne, selectList, update, delete)에 맞게 수행되는 태그 -->
+
+
+
+	<insert id="ninsert"> <!-- daoimple 1 -->
+		<!-- 11.16일. 윗 id 부분은 daoimple의 .insert(NAMESPACE + <".ninsert"> 이 부분, 
+			vo) 이유를 알자. dao와 doaimple와 연결성. $ 달러 부분은 MYBATIS 의 NAME 부분. # 부분은 VO랑 DB의 
+			테이블 부분. 즉 ${ntitle} 이 부분 = mybatis name 부분 #{ntitle} 이 부분은 vo와 테이블 컬럼 부분. -->
+		insert into NBOARD (${ntitle}, ${ncontent}, ${nuserid})
+		values (#{ntitle}, #{ncontent}, #{nuserid})
+
+	</insert>
+
+	<!-- parameterType="noticeVO" -->
+
+	<!-- $ 마이바티스 name 부분 #부분은 vo = 테이블 컬럼명 -->
+
+	<!-- // 밑으로 들어간다. 셋의 공통점은 db에 데이터를 집어넣는다. ㅇ데이터가 변한다. 셀렉트는 조회 (기존 데이터 변화 
+		x ) 인설 업데이트 딜리트는 같음 셀렉트ㅡㄴ 가져온다. (가져온다의 정의가 필요함.) -->
+
+	<select id="nselect_all" resultType="NBoardVO"> <!-- daoimple 2 -->
+		<!-- while문 으로 하나 씩 꺼내는게 사라진다. 쿼리입력 데이터가 넘어오면 넘어온걸 써주면된다. -->
+		select * from ${NBoard }
+		order by ${bno} desc
+
+	</select>
+
+
+	<!-- mvc 쿼리임 비교해서 밑에 작성하기 public static final string SQL_SELECT_ALL = "select 
+		* from " + ${test_board} + " order by " + ${bno} + " desc"; -->
+
+	<select id="nselect_by_bno" resultType="NBoardVO"> <!-- daoimple 3 -->
+		select * from ${NBoard} where ${bno} = #{bno}
+	</select>
+
+
+
+	<update id="nupdate"> <!-- daoimple 4 -->
+
+		update ${NBoard}
+		set ${ntitle} = #{ntitle}, ${ncontent} = #{ncontent}
+		where + ${bno} = #{bno}
+
+	</update>
+
+
+	<!-- vo랑db 동일하게 보냊는 쪽이기에 reply_content인데 vo변수명과 매칭을 해야하는데 vo java는 언더스코어 
+		xxxx 그래서 이걸 통역해주는애가 마이바티스 _ : 언더스코어 마이바티스 결론 : name 부분 카멜명렁법으로 쓰자! -->
+
+	<delete id="ndelete"> <!-- daoimple 5 -->
+
+		delete from ${NBoard}
+		where ${bno} = #{bno}
+
+	</delete>
+
+
+	<!-- 패이징 처리 mvc 게시판에 쿼리부분에서 가져옴 -->
+
+	<!-- parameterType="NBoardVO" -->
+
+	<select id="npaging" resultType="NBoardVO"> <!-- daoimple 6 -->
+
+		select b.${bno}, b.${ntitle}, b.${ncontent}, b.${nuserid}, b.${ncdate}
+		from(
+		select rownum rn, a.* from(
+		select * from ${NBoard} order by ${bno} desc
+		)a
+		)b where rn between #{start} and #{end}
+
+	</select>
+
+	<select id="ntotal_count" resultType="Integer"> <!-- daoimple 7 -->
+		select count(*) total_cnt from ${NBoard}
+	</select>
+
+	<!-- $ 마이바티스 name 부분 #부분은 vo = 테이블 컬럼명 -->
+
+	<!-- #{start} : getStart() #{end} : getEnd() 변수가 없음 -->
+
+	<select id="select_by_nuserid" resultType="NBoardVO">
+		select * from ${NBoard}
+		where ${nuserid} like #{nuserid}
+	</select>
+
+
+
+	<select id="select_by_title_ncontent" resultType="NBoardVO">
+		select * from ${NBoard}
+		where ${ntitle} like #{keyword} or
+		${ncontent} like #{keyword}
+		order by ${bno} desc
+	</select>
+	<!-- n보드 에있는 모든것들중에 타이틀과 제목을 키워드[내용물]로 검색해서 번호 오름차순으로 출력한다. -->
+
+
+
+	<!-- 게시판 검색기능 -->
+
+	<!-- <select id="selectSearchList" resultType="NBoardVO"> select * from 
+		${NBOARD} where ndelete_yn_'N' <choose> 타입이 널이 아니면 <when test= "type != null 
+		and type.equals('ntitle')"> and ntitle LIKE CONCAT ('%', #{keyword}, '%') 
+		</when> <when test= "type != null and type.equals('ncontent')"> and ncontent 
+		LIKE CONCAT ('%', #{keyword}, '%') </when> </choose> </select> -->
+
+
+	<!--11-26 추가 -->
+
+	<select id="listAll" resultType="NBoardVO">
+		<!-- SELECT ${bno}, ${ntitle}, ${ncontent}, ${ncdate} FROM ${NBoard} -->
+		SELECT * FROM ${NBoard}
+		<!-- 테이블 보드이름. 왜? _ 방식 사용한것보고 -->
+
+		<include refid="search"></include>
+		ORDER BY ${bno} desc
+	</select>
+
+
+	<!-- sql code 조각 -->
+	<!-- 반복돠는 sql의 일부를 sql태그를 이용하여 따로 빼돌수 있다. -->
+
+	<sql id="search">
+		<choose>
+			<!-- 검색옵션이 전체 검색일 경우. -->
+			<when test="searchOption == 'all'">
+				WHERE ${ntitle} like '%'||#{keyword}||'%'
+				OR ${ncontent} like '%'||#{keyword}||'%'
+			</when>
+
+			<!-- otherwise : default문 같은 역할을 사용하고 싶으면 <c:shoose> 태그 안에 <c:otherwise>태그 
+				사용 -->
+
+			<otherwise>
+				WHERE ${searchOption} like '%' ||#{keyword}||'%'
+
+			</otherwise>
+		</choose>
+	</sql>
+
+
+
+
+
+	<!-- 작성자부분 봉인. 11-25 -->
+
+	<!-- <when test= "type != null and type.equals('writer')"> and writer = 
+		#{keyword} </when> -->
+
+
+	<!-- CONCAT 함수 : 여러 범위 및/또는 문자열의 텍스트를 결합 -->
+	<!-- type을 선택하지 않고 select 버튼을 눌렀을 때 delete_yn='N'인 글을 출력 -->
+
+
+
+
+
+
+
+
+
+	<!-- 기존에 했던 것 완성본보고 견적 짜보기 뭘 만들지 단어 위주로 검색하기 동사 형용사 x 빼버리고 10/21 쿼리작성 <update 
+		id="update_reply_count"> update ${test_board} set ${replyCount} = ${replyCount} 
+		+ #{amount} where ${bno} = #{bno} </update> 업데이트 쿼리문 update test_count = 
+		reply_count + ? set reply_count = reply_count + ? where bno = ? -->
+
+
+	<!-- NBoard 끝 -->
+
+
+
+
+	<!-- FBoard 시작 -->
+
+
+	<!-- 11.15 오후 freeboard에도 명심하고 잘 적용할 것.! $ 마이바티스 name 부분 #부분은 vo = 테이블 컬럼명 -->
+
+	<!-- #{start} : getStart() #{end} : getEnd() 변수가 없음 -->
+
+	<insert id="finsert"> <!-- daoimple 확인. -->
+		insert into FBOARD (${ftitle}, ${fcontent}, ${fuserid})
+		values (#{ftitle}, #{fcontent}, #{fuserid})
+	</insert>
+
+	<!-- parameterType="noticeVO" -->
+
+	<!-- $ 마이바티스 name 부분 #부분은 vo = 테이블 컬럼명 -->
+
+
+	<select id="fselect_all" resultType="FBoardVO">
+		<!-- while문 으로 하나 씩 꺼내는게 사라진다. 쿼리입력 데이터가 넘어오면 넘어온걸 써주면된다. -->
+		<!-- daoimple 확인 -->
+		select * from ${FBoard }
+		order by ${bno} desc
+	</select>
+
+
+
+	<select id="fselect_by_bno" resultType="FBoardVO">
+		select * from ${FBoard} where ${bno} = #{bno}
+	</select> <!-- daoimple 확인 -->
+
+
+
+	<update id="fupdate">
+		update ${FBoard}
+		set ${ftitle} = #{ftitle}, ${fcontent} = #{fcontent}
+		where + ${bno} = #{bno}
+	</update> <!-- daoimple 확인 -->
+
+
+
+	<delete id="fdelete">
+		delete from ${FBoard}
+		where ${bno} = #{bno}
+	</delete> <!-- daoimple 확인 -->
+
+
+
+	<select id="fpaging" resultType="FBoardVO">
+		select b.${bno}, b.${ftitle}, b.${fcontent}, b.${fuserid}, b.${fcdate} from(
+		select rownum rn, a.* from(
+		select * from ${FBoard} order by ${bno} desc
+		)a
+		)b where rn between #{start} and #{end}
+	</select>  <!-- daoimple 확인 -->
+
+
+
+
+	<select id="ftotal_count" resultType="Integer">
+		select count(*) total_cnt from ${FBoard}
+	</select> <!-- daoimple 확인 -->
+
+
+
+
+	<select id="select_by_fuserid" resultType="FBoardVO">
+		select * from ${FBoard}
+		where ${fuserid} like #{fuserid}
+	</select> <!-- daoimple 확인 -->
+
+
+
+	<select id="select_by_title_fcontent" resultType="FBoardVO">
+		select * from ${FBoard}
+		where ${ftitle} like #{keyword} or
+		${fcontent} like #{keyword}
+		order by ${bno} desc
+	</select>   <!-- daoimple 확인 -->
+
+	<!-- 11-18일 추가 -->
+
+	<!-- 11-18 ID 부분은 DAOImple에 .부분 맞출 것. -->
+
+	<update id="update_freply_count">
+		update ${FBoard}
+		set ${freplycount} = ${freplycount} + #{amount}
+		where ${bno} = #{bno}
+	</update>
+
+
+	<!-- $ 달러 부분은 MYBATIS 의 NAME 부분. # 부분은 VO랑 DB의 테이블 부분. 즉 ${ftitle} 이 부분 
+		= mybatis name 부분 #{ftitle} 이 부분은 vo와 테이블 컬럼 부분. -->
+
+
+	<!-- CBOARD 시작 11-23 -->
+
+	<insert id="cinsert"> <!-- DAOImple 맞춘 후 체크 -->
+
+		<!-- 11/23 DAOImple의 .insert(NAMESPACE + <".cinsert"> 이 부분, vo) dao와 daoimple 
+			연결성. $ : mybatis name 부분. # : vo, db 테이블 부분. ex) ${ctitle} 이 부분 -> mybatis 
+			name 부분. #{ctitle} 이 부분은 vo, 테이블 컬럼 부분. -->
+
+		insert into CBOARD (${ctitle}, ${ccontent}, ${cuserid})
+		values (#{ctitle}, #{ccontent}, #{cuserid})
+
+	</insert>
+
+
+	<select id="cselect_all" resultType="CBoardVO">
+		<!-- while문 으로 하나 씩 꺼내는게 사라진다. 쿼리입력 데이터가 넘어오면 넘어온걸 써주면된다. -->
+		select * from ${CBoard }
+		order by ${bno} desc
+
+	</select>
+
+
+	<!-- public static final string SQL_SELECT_ALL = "select * from " + ${test_board} 
+		+ " order by " + ${bno} + " desc"; -->
+
+	<select id="cselect_by_bno" resultType="CBoardVO">
+		select * from ${CBoard} where ${bno} = #{bno}
+	</select>
+
+
+
+	<update id="cupdate">
+
+		update ${CBoard}
+		set ${ctitle} = #{ctitle}, ${ccontent} = #{ccontent}
+		where + ${bno} = #{bno}
+
+	</update>
+
+
+	<!-- vo랑db 동일하게 보냊는 쪽이기에 reply_content인데 vo변수명과 매칭을 해야하는데 vo java는 언더스코어 
+		xxxx 그래서 이걸 통역해주는애가 마이바티스 : 언더스코어 마이바티스 결론 : name 부분 카멜명렁법으로 쓰자! -->
+
+	<delete id="cdelete">
+
+		delete from ${CBoard}
+		where ${bno} = #{bno}
+
+	</delete>
+
+
+	<!-- 패이징 처리 -->
+
+	<!-- parameterType="CBoardVO" -->
+
+	<select id="cpaging" resultType="CBoardVO"> <!-- daoimple 6 -->
+
+		select b.${bno}, b.${ctitle}, b.${ccontent}, b.${cuserid}, b.${ccdate}
+		from(
+		select rownum rn, a.* from(
+		select * from ${CBoard} order by ${bno} desc
+		)a
+		)b where rn between #{start} and #{end}
+
+	</select>
+
+
+
+
+	<select id="ctotal_count" resultType="Integer">
+		select count(*) total_cnt from ${CBoard}
+	</select>
+
+	<!-- $ 마이바티스 name 부분 #부분은 vo = 테이블 컬럼명 -->
+
+	<!-- #{start} : getStart() #{end} : getEnd() 변수가 없음 -->
+
+	<select id="select_by_cuserid" resultType="CBoardVO">
+		select * from ${CBoard}
+		where ${cuserid} like #{cuserid}
+	</select>
+
+
+
+	<select id="select_by_title_ccontent" resultType="CBoardVO">
+		select * from ${CBoard}
+		where ${ctitle} like #{keyword} or
+		${ccontent} like #{keyword}
+		order by ${bno} desc
+	</select>
+
+
+
+
+	<select id="clistAll" resultType="CBoardVO">
+		<!-- SELECT ${bno}, ${ntitle}, ${ncontent}, ${ncdate} FROM ${NBoard} -->
+		SELECT * FROM ${CBoard}
+		<!-- 테이블 보드이름. 왜? _ 방식 사용한것보고 -->
+
+		<include refid="csearch"></include>
+		ORDER BY ${bno} desc
+	</select>
+
+
+	<!-- sql code 조각 -->
+	<!-- 반복돠는 sql의 일부를 sql태그를 이용하여 따로 빼돌수 있다. -->
+
+	<sql id="csearch">
+		<choose>
+			<!-- 검색옵션이 전체 검색일 경우. -->
+			<when test="searchOption == 'all'">
+				WHERE ${ctitle} like '%'||#{keyword}||'%'
+				OR ${ccontent} like '%'||#{keyword}||'%'
+			</when>
+
+			<!-- otherwise : default문 같은 역할을 사용하고 싶으면 <c:shoose> 태그 안에 <c:otherwise>태그 
+				사용 -->
+
+			<otherwise>
+				WHERE ${searchOption} like '%' ||#{keyword}||'%'
+
+			</otherwise>
+		</choose>
+	</sql>
+
+
+
+
+	<!-- 기존에 했던 것 완성본보고 견적 짜보기 뭘 만들지 단어 위주로 검색하기 동사 형용사 x 빼버리고 10/21 쿼리작성 <update 
+		id="update_reply_count"> update ${test_board} set ${replyCount} = ${replyCount} 
+		+ #{amount} where ${bno} = #{bno} </update> 업데이트 쿼리문 update test_count = 
+		reply_count + ? set reply_count = reply_count + ? where bno = ? -->
+
+	<!-- 11-30 회원가입 쿼리. -->
+
+	<insert id="insertMember" parameterType="MemberVO">
+	
+	  	<!-- SELECT * FROM MEMBER  
+	 	 -->
+		  insert into Member (userid, password, email, phone)
+		values (#{userid}, #{password}, #{email}, #{phone})  
+
+		<!-- 등록은 등록이기에 전부 들어간다. -->
+	</insert>
+	<select id="loginMember" parameterType="MemberVO" resultType="String">
+	SELECT USERID FROM MEMBER WHERE USERID=#{userid} AND PASSWORD=#{password} 
+	</select>
+
+	<!-- insert id="test" parameYypr="member" <insert into member(userid,password,email,phone) 
+		value(#{userid},#{password},#{email},#{phone}) </insert> 이렇게도 생각이 가능하구나. 
+		11-30 -->
+<!-- 
+	<select id="select_by_userid">
+
+		select * from ${Member}
+
+		where ${userid} like #{USERID}
+
+	</select>
+ -->
+
+	<!-- <update id="update">
+
+		update ${Member} SET
+		${password} = #{PASSWORD},
+		${email} = #{EMAIL},
+		${phone} = #{PHONE}
+		WHERE ${userid} = #{USERID}
+
+	</update> -->
+
+<!-- 	<delete id="delete">
+		delete from ${Member}
+		where ${userid} = #{USERID}
+		and ${password} = #{PASSWORD}
+
+	</delete> -->
+	
+	<!-- 회원탈퇴인데 그냥 select * from ${Member} 해서 전부 정보 가져오는건? -->
+
+
+
+	<!-- <select id="login"> // 일단 주석처리.11-30 </select> -->
+
+	<!-- 11-30 추가 -->
+
+	<!-- <select id="checkPw" resultType="int">
+
+		SELECT COUNT(*)
+		FROM ${Member}
+		where ${userid} = #{USERID} AND ${password} #{PASSWORD}
+	</select>
+ -->
+
+</mapper> 

@@ -1,0 +1,120 @@
+@charset "EUC-KR";
+
+body {
+/*   color : #333; */
+  background-Color:White; /* Floralwhite; */
+ 
+ 
+ 
+ /* http://ielselog.blogspot.com/2013/10/css-color-keywords.html */ 
+}
+
+div3{ 
+	 color : black;
+}
+
+
+
+h6{
+	background-color :LightGrey;
+	height : 20px; 
+}
+
+
+
+h2 {
+	/*  Khaki */ 
+	/* LightGrey  */
+	background-color :Khaki;/* ForestGreen; */
+	height : 50px; /*  높이값 추가. 초록색 영역이 늘어난다. */ 
+    color : black;
+    font-size: 40px;
+}
+
+h3 { /*공지사항 디테일부분  */
+	
+	background-color :Khaki;/* ForestGreen; */
+	height : 50px; /*  높이값 추가. 초록색 영역이 늘어난다. */ 
+    color : black;
+    font-size: 40px;
+}
+
+
+
+
+
+h4{ /* 페이지 상단 회색 바 밑 이중효과 주려고  */
+	background-color :LightGrey;
+	height : 25px;
+
+}
+
+
+h5 {
+	/*  Khaki */ 
+	/* LightGrey  */
+	background-color :Khaki;/* ForestGreen; */
+	height : 80px; /*  높이값 추가. 초록색 영역이 늘어난다. */ 
+    color : black;
+    font-size: 70px;
+}
+
+
+
+
+
+
+
+
+
+
+
+/*https://somgle.tistory.com/123 css 색모음. 11-26  */
+
+
+header {
+  
+	/*  color : #333; */
+	background-color : White; /* orange; */
+	height : 70px;
+	
+}
+
+
+legend {
+  
+  font-size: 25px;
+  
+}
+
+
+
+nav {  
+  
+  height : 20px; 
+  
+  
+} /*  메인 페이지 버튼 뒷 배경  */
+
+.yk {
+	background-color : White 
+}
+
+#yk {
+	background-color :White 
+}
+
+
+#yk1 { /* 사이드 색상지정. */
+	padding : 0px;
+	background : WhiteSmoke;
+}
+/* header.inner {
+  
+	width: 1100px; 가로너비 
+	margin : 0 auto; 마진 외부여백 
+	background-color: Green;
+	
+} */
+
+

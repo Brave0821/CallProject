@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<!-- 10.15 Mybatis 프레임워크 설정을 위한 파일 :D 꼭 파일명은 root-context.xml 설정된 이름으로 만들기 -->
+
+<configuration>
+
+	<!-- DB 테이블과 컬럼들을 mapper 매핑을 위한 변수 선언 -->
+
+	<!-- 자동 매핑 기능을 지원하는 ORM(Object relational Mapping)프레임워크 이니까 mapper과 연관성이 
+		있는거고 11.16 -->
+
+	<!-- mybatis를 이용하여 VO에 리턴값을 받을때 카멜케이스를 적용하고 싶다면 11.12추가 -->
+
+	<properties>
+
+		<!-- * property - name : mapper.xml에서 사용될 이름 - value : DB 테이블 및 컬럼 이름 오라클 
+			TEST_BOARD 컬럼이름 적기 :D -->
+
+		<!-- 공지사항 공지사항 mapper에 $부분 name랑 이름 맞추기. name $ 부분이 혹시 jsp에 $부분도 -->
+		
+		<property name="NBoard" value="NBOARD" />
+		<property name="bno" value="BNO" />
+		<property name="ntitle" value="NTITLE" />
+		<property name="ncontent" value="NCONTENT" />
+		<property name="nuserid" value="NUSERID" />
+		<property name="ncdate" value="NCDATE" />
+		<!-- 게시판 검색 추가.  -->
+		<property name="type" value="TYPE" />
+		<property name="keyword" value="KEYWORD" />
+		<!-- <property name="gbname" value="GBNAME" /> -->
+
+
+		<!-- 자유게시판 자유게시판 mapper에 $부분 name랑 이름 맞출 것. #부분은 vo = 테이블 부분. -->
+
+		<property name="FBoard" value="FBOARD" />
+		<property name="bno" value="BNO" />
+		<property name="ftitle" value="FTITLE" />
+		<property name="fcontent" value="FCONTENT" />
+		<property name="fuserid" value="FUSERID" />
+		<property name="fcdate" value="FCDATE" />
+		<!-- 11-18추가 자유게시판의 댓글 카운트이므로 fboard에 속하는 것.
+		쉽게 03번 board와 reply 관계를 생각하면 된다. -->
+		<property name="freplycount" value="FREPLYCOUNT" />
+		<!-- 혹시 컨트롤러 부분에 03 컨트롤러랑 내 f 컨트롤러랑 비교해보고 다른거 수정하기.  -->
+		
+		
+		<!-- 자유게시판 댓글 11-16 reply mapper에 $부분 name랑 이름 맞출 것. #부분은 vo = 테이블 부분. -->
+
+		<property name="FReply" value="FREPLY" />
+		<property name="freplyno" value="FREPLYNO" />
+		<property name="freplybno" value="FREPLYBNO" />
+		<property name="freplycontent" value="FREPLYCONTENT" />
+		<property name="freplyid" value="FREPLYID" />
+		<property name="freplydate" value="FREPLYDATE" />
+
+
+		<!-- 스팸번호 게시판 11-23   -->
+		<!-- 스팸번호 게시판 mapper에 $부분 name랑 이름 맞추기. name $ 부분이 혹시 jsp에 $부분도  -->
+		
+		<property name="CBoard" value="CBOARD" />
+		<property name="bno" value="BNO" />
+		<property name="ctitle" value="CTITLE" />
+		<property name="ccontent" value="CCONTENT" />
+		<property name="cuserid" value="CUSERID" />
+		<property name="ccdate" value="CCDATE" />
+		<!-- 게시판 검색 추가.  -->
+		<property name="type" value="TYPE" />
+		<property name="keyword" value="KEYWORD" />
+	
+	<!-- 회원가입 11-30 -->
+	
+	<property name="Member" value="MEMBER"/>
+	<property name="userid" value="USERID"/>
+	<property name="password" value="PASSWORD"/>
+	<property name="email" value="EMAIL"/>
+	<property name="phone" value="PHONE"/>
+	
+	<!-- Mapper의 $부분은 mybaties의 name 부분.
+		 Mapper의 #부분은 VO or DB의 테이블부분.		
+	
+	 -->
+	
+	</properties>
+
+	<!-- VALUE 테이블 NAME VO -->
+
+	<!-- typeAliases : mapper.xml의 select 리턴 타입에 들어갈 클래스 경로를 설정 // 내가 모델 형태로 
+		쓸 경로를 경로 관련된 것 복붙하니까 안 빠꿈 -->
+
+
+	<typeAliases>
+		<package name="edu.spring.ex08.domain" />
+	</typeAliases>
+
+	<!-- <settings> <setting name="mapUnderscoreToCamelCase" value="true"/> 
+		</settings> -->
+
+	<!-- alias는 별명이니까 원하는거 구분짓는 용으로 암거나 가능한가? -->
+
+	<!-- <typeAliases> <typeAlias alias="NBoardVO" type="edu.spring.ex08.domain.NBoardVO"/> 
+		</typeAliases> -->
+
+	<!-- 스프링 사용 시 패키지 경로 주의하기! 오타주의 자동완성 x -->
+	
+</configuration>

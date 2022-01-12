@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"	 
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	
+	https://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/mvc
+	http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<!-- Root Context: defines shared resources visible to all other web components -->
+
+
+<!--11.12 
+
+잘 연결 되었는지 테스트 진행하기.
+1. JDBC 잘 되는지 확인.
+2. DataSource(DBCP) 잘 되는지 확인.
+3. SQLSessionFactory 확인하기.
+4. sqlSession 확인. 
+
+mybatis 쓰기 위해서 순서대로 잘 되는지 확인이 되어야한다.
+
+<CallProject> 11.15
+
+  -->
+
+
+	<!-- 11.11 DataSource 설정 순서대로 집어넣을 것 -->
+
+
+	<bean id="ds" class="oracle.jdbc.pool.OracleDataSource"
+		destroy-method="close">
+		<property name="dataSourceName" value="ds"></property>
+		<property name="URL"
+			value="jdbc:oracle:thin:@localhost:1521:xe"></property>
+		<property name="user" value="call"></property>
+		<property name="password" value="12345"></property>
+	</bean>
+
+
+<!--  11.11 spring 설정 : sqlSessionFactory -->
+	<bean id="sqlSessionFactory"
+		class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="ds" />
+		<property name="configLocation"
+			value="classpath:/mybatis-config.xml" />
+		<property name="mapperLocations"
+			value="classpath:mappers/*.xml" />
+		<!-- classpath == src/main/resources -->
+	</bean>
+
+
+
+	<!-- 11.11 spring 설정 : sqlSession -->
+	<bean id="sqlSession"
+		class="org.mybatis.spring.SqlSessionTemplate"
+		destroy-method="clearCache">
+		<constructor-arg name="sqlSessionFactory"
+			ref="sqlSessionFactory" />
+	</bean>
+
+
+<!-- spring에서 제공하는 DB Transaction Manager를 bean으로 등록 11/11-->
+	<bean id="transactionManager"
+	class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="ds"></property>
+		
+	</bean>
+
+
+<!-- 트랜잭션 관리를 수행하는 Aspect를 annotation 기반으로 사용 -->
+	<tx:annotation-driven/>	
+	<!--  -->
+	<!-- 10.15
+		base-package 밑의 클래스들 중에서
+		@Component로 등록된 클래스들을 bean으로 생성해서 관리
+		Persistence/Service Layer의 컴포넌트 클래스들을 bean으로 등록
+	 -->
+	 
+	<context:component-scan base-package="edu.spring.ex08"></context:component-scan>
+</beans>
